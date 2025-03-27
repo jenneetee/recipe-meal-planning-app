@@ -32,7 +32,8 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _screens = [
     HomeScreen(),
     MealPlannerScreen(),
-    GroceryListScreen(),
+    GroceryListScreen(ingredients: []),  // Pass an empty list as a fallback
+
   ];
 
   // Updates the selected index when a bottom navigation item is tapped

@@ -1,49 +1,47 @@
 import 'package:flutter/material.dart';
 
 class GroceryListScreen extends StatefulWidget {
+  final List<String> ingredients;
+
+  GroceryListScreen({required this.ingredients});
+
   @override
   _GroceryListScreenState createState() => _GroceryListScreenState();
 }
 
 class _GroceryListScreenState extends State<GroceryListScreen> {
-  final List<String> ingredients = [
-    "Milk",
-    "Bread",
-    "Peanut Butter",
-    "Lettuce",
-    "Tomato"
-  ];
-  final Map<String, bool> checkedItems = {};
+  late List<String> groceryItems;
+
+  @override
+  void initState() {
+    super.initState();
+    groceryItems = List.from(widget.ingredients);
+  }
+
+  void _removeItem(int index) {
+    setState(() {
+      groceryItems.removeAt(index);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Grocery List")),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: ingredients.length,
+      body: groceryItems.isEmpty
+          ? Center(child: Text("No items in the grocery list"))
+          : ListView.builder(
+              itemCount: groceryItems.length,
               itemBuilder: (context, index) {
-                String ingredient = ingredients[index];
-                return CheckboxListTile(
-                  title: Text(ingredient),
-                  value: checkedItems[ingredient] ?? false,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      checkedItems[ingredient] = value!;
-                    });
-                  },
+                return ListTile(
+                  title: Text(groceryItems[index]),
+                  trailing: IconButton(
+                    icon: Icon(Icons.delete, color: Colors.red),
+                    onPressed: () => _removeItem(index),
+                  ),
                 );
               },
             ),
-          ),
-          FloatingActionButton(
-            onPressed: () {}, // Future: Add ingredient functionality
-            child: Icon(Icons.add),
-          ),
-        ],
-      ),
     );
   }
 }
