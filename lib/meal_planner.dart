@@ -1,6 +1,12 @@
+// meal_planner.dart (updated)
 import 'package:flutter/material.dart';
+import 'grocery_list.dart';
+import 'home_screen.dart';
 
 class MealPlannerScreen extends StatefulWidget {
+  final List<Map<String, dynamic>> recipes;
+  MealPlannerScreen({required this.recipes});
+
   @override
   _MealPlannerScreenState createState() => _MealPlannerScreenState();
 }
@@ -13,7 +19,41 @@ class _MealPlannerScreenState extends State<MealPlannerScreen> {
     "Mon 10th",
     "Tue 11th"
   ];
-  int selectedDay = 1; // Default selection
+  int selectedDay = 0;
+  Map<String, List<Map<String, dynamic>>> mealPlan = {};
+
+  @override
+  void initState() {
+    super.initState();
+    for (var day in days) {
+      mealPlan[day] = [];
+    }
+  }
+
+  void _addMealToDay(Map<String, dynamic> recipe) {
+    setState(() {
+      mealPlan[days[selectedDay]]!.add(recipe);
+    });
+  }
+
+  void _showRecipeSelector() {
+    showModalBottomSheet(
+      context: context,
+      builder: (_) {
+        return ListView(
+          children: widget.recipes.map((recipe) {
+            return ListTile(
+              title: Text(recipe['name']),
+              onTap: () {
+                Navigator.pop(context);
+                _addMealToDay(recipe);
+              },
+            );
+          }).toList(),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,10 +77,8 @@ class _MealPlannerScreenState extends State<MealPlannerScreen> {
                           : Colors.grey[400],
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Text(
-                      days[index],
-                      style: TextStyle(color: Colors.white),
-                    ),
+                    child: Text(days[index],
+                        style: TextStyle(color: Colors.white)),
                   ),
                 );
               }),
@@ -48,17 +86,16 @@ class _MealPlannerScreenState extends State<MealPlannerScreen> {
           ),
           Expanded(
             child: ListView(
-              children: [
-                MealTile(time: "9:15AM", meal: "Breakfast", dish: "Cereal"),
-                MealTile(time: "12:00PM", meal: "Lunch", dish: "PB&J Sandwich"),
-                MealTile(time: "6:30PM", meal: "Dinner", dish: "Veggie Wrap"),
-              ],
+              children: mealPlan[days[selectedDay]]!.map((meal) {
+                return MealTile(time: "", meal: meal['name'], dish: "");
+              }).toList(),
             ),
           ),
           FloatingActionButton(
-            onPressed: () {}, // Future: Add meal functionality
+            onPressed: _showRecipeSelector,
             child: Icon(Icons.add),
           ),
+          SizedBox(height: 10)
         ],
       ),
     );
@@ -78,7 +115,7 @@ class MealTile extends StatelessWidget {
       margin: EdgeInsets.all(10),
       child: ListTile(
         leading: Icon(Icons.food_bank),
-        title: Text("$time - $meal"),
+        title: Text(meal),
         subtitle: Text(dish),
       ),
     );

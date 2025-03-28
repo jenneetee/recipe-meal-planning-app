@@ -10,17 +10,27 @@ class GroceryListScreen extends StatefulWidget {
 }
 
 class _GroceryListScreenState extends State<GroceryListScreen> {
-  late List<String> groceryItems;
+  late List<String> groceryList;
+  final TextEditingController _controller = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    groceryItems = List.from(widget.ingredients);
+    groceryList = List.from(widget.ingredients);
   }
 
-  void _removeItem(int index) {
+  void _addIngredient() {
+    if (_controller.text.isNotEmpty) {
+      setState(() {
+        groceryList.add(_controller.text);
+        _controller.clear();
+      });
+    }
+  }
+
+  void _removeIngredient(String ingredient) {
     setState(() {
-      groceryItems.removeAt(index);
+      groceryList.remove(ingredient);
     });
   }
 
@@ -28,20 +38,46 @@ class _GroceryListScreenState extends State<GroceryListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Grocery List")),
-      body: groceryItems.isEmpty
-          ? Center(child: Text("No items in the grocery list"))
-          : ListView.builder(
-              itemCount: groceryItems.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(groceryItems[index]),
-                  trailing: IconButton(
-                    icon: Icon(Icons.delete, color: Colors.red),
-                    onPressed: () => _removeItem(index),
+      body: Padding(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _controller,
+                    decoration: InputDecoration(
+                      hintText: "Add an ingredient...",
+                      border: OutlineInputBorder(),
+                    ),
                   ),
-                );
-              },
+                ),
+                SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: _addIngredient,
+                  child: Icon(Icons.add),
+                ),
+              ],
             ),
+            SizedBox(height: 10),
+            Expanded(
+              child: ListView.builder(
+                itemCount: groceryList.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(groceryList[index]),
+                    trailing: IconButton(
+                      icon: Icon(Icons.delete, color: Colors.red),
+                      onPressed: () => _removeIngredient(groceryList[index]),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
