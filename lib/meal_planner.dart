@@ -1,4 +1,3 @@
-// meal_planner.dart (updated with time selection)
 import 'package:flutter/material.dart';
 import 'grocery_list.dart';
 import 'home_screen.dart';
@@ -37,6 +36,12 @@ class _MealPlannerScreenState extends State<MealPlannerScreen> {
           a["time"].hour.compareTo(b["time"].hour) == 0
               ? a["time"].minute.compareTo(b["time"].minute)
               : a["time"].hour.compareTo(b["time"].hour));
+    });
+  }
+
+  void _removeMealFromDay(int index) {
+    setState(() {
+      mealPlan[days[selectedDay]]!.removeAt(index);
     });
   }
 
@@ -95,13 +100,16 @@ class _MealPlannerScreenState extends State<MealPlannerScreen> {
             ),
           ),
           Expanded(
-            child: ListView(
-              children: mealPlan[days[selectedDay]]!.map((meal) {
+            child: ListView.builder(
+              itemCount: mealPlan[days[selectedDay]]!.length,
+              itemBuilder: (context, index) {
+                final meal = mealPlan[days[selectedDay]]![index];
                 return MealTile(
                   time: meal['time'],
                   meal: meal['recipe']['name'],
+                  onDelete: () => _removeMealFromDay(index),
                 );
-              }).toList(),
+              },
             ),
           ),
           FloatingActionButton(
@@ -118,8 +126,9 @@ class _MealPlannerScreenState extends State<MealPlannerScreen> {
 class MealTile extends StatelessWidget {
   final TimeOfDay time;
   final String meal;
+  final VoidCallback onDelete;
 
-  MealTile({required this.time, required this.meal});
+  MealTile({required this.time, required this.meal, required this.onDelete});
 
   @override
   Widget build(BuildContext context) {
@@ -129,6 +138,10 @@ class MealTile extends StatelessWidget {
         leading: Icon(Icons.food_bank),
         title: Text(meal),
         subtitle: Text("Time: ${time.format(context)}"),
+        trailing: IconButton(
+          icon: Icon(Icons.delete, color: Colors.red),
+          onPressed: onDelete,
+        ),
       ),
     );
   }

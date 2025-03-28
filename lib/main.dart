@@ -1,4 +1,4 @@
-// main.dart (updated with custom color scheme)
+// main.dart
 import 'package:flutter/material.dart';
 import 'meal_planner.dart';
 import 'grocery_list.dart';
