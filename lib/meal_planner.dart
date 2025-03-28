@@ -12,7 +12,13 @@ class MealPlannerScreen extends StatefulWidget {
 }
 
 class _MealPlannerScreenState extends State<MealPlannerScreen> {
-  final List<String> days = ["Fri 7th", "Sat 8th", "Sun 9th", "Mon 10th", "Tue 11th"];
+  final List<String> days = [
+    "Fri 7th",
+    "Sat 8th",
+    "Sun 9th",
+    "Mon 10th",
+    "Tue 11th"
+  ];
   int selectedDay = 0;
   Map<String, List<Map<String, dynamic>>> mealPlan = {};
 
@@ -28,21 +34,6 @@ class _MealPlannerScreenState extends State<MealPlannerScreen> {
     setState(() {
       mealPlan[days[selectedDay]]!.add(recipe);
     });
-  }
-
-  void _generateGroceryList() {
-    Set<String> ingredients = {};
-    for (var meals in mealPlan.values) {
-      for (var meal in meals) {
-        ingredients.addAll(List<String>.from(meal['ingredients']));
-      }
-    }
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => GroceryListScreen(ingredients: ingredients.toList()),
-      ),
-    );
   }
 
   void _showRecipeSelector() {
@@ -81,10 +72,13 @@ class _MealPlannerScreenState extends State<MealPlannerScreen> {
                     padding: EdgeInsets.all(10),
                     margin: EdgeInsets.symmetric(horizontal: 5),
                     decoration: BoxDecoration(
-                      color: selectedDay == index ? Colors.grey[800] : Colors.grey[400],
+                      color: selectedDay == index
+                          ? Colors.grey[800]
+                          : Colors.grey[400],
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Text(days[index], style: TextStyle(color: Colors.white)),
+                    child: Text(days[index],
+                        style: TextStyle(color: Colors.white)),
                   ),
                 );
               }),
@@ -97,18 +91,9 @@ class _MealPlannerScreenState extends State<MealPlannerScreen> {
               }).toList(),
             ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              FloatingActionButton(
-                onPressed: _showRecipeSelector,
-                child: Icon(Icons.add),
-              ),
-              ElevatedButton(
-                onPressed: _generateGroceryList,
-                child: Text("Generate Grocery List"),
-              )
-            ],
+          FloatingActionButton(
+            onPressed: _showRecipeSelector,
+            child: Icon(Icons.add),
           ),
           SizedBox(height: 10)
         ],
