@@ -1,4 +1,4 @@
-// meal_planner.dart (updated)
+// meal_planner.dart (updated with time selection)
 import 'package:flutter/material.dart';
 import 'grocery_list.dart';
 import 'home_screen.dart';
@@ -30,9 +30,13 @@ class _MealPlannerScreenState extends State<MealPlannerScreen> {
     }
   }
 
-  void _addMealToDay(Map<String, dynamic> recipe) {
+  void _addMealToDay(Map<String, dynamic> recipe, TimeOfDay time) {
     setState(() {
-      mealPlan[days[selectedDay]]!.add(recipe);
+      mealPlan[days[selectedDay]]!.add({"recipe": recipe, "time": time});
+      mealPlan[days[selectedDay]]!.sort((a, b) =>
+          a["time"].hour.compareTo(b["time"].hour) == 0
+              ? a["time"].minute.compareTo(b["time"].minute)
+              : a["time"].hour.compareTo(b["time"].hour));
     });
   }
 
@@ -44,9 +48,15 @@ class _MealPlannerScreenState extends State<MealPlannerScreen> {
           children: widget.recipes.map((recipe) {
             return ListTile(
               title: Text(recipe['name']),
-              onTap: () {
+              onTap: () async {
                 Navigator.pop(context);
-                _addMealToDay(recipe);
+                TimeOfDay? selectedTime = await showTimePicker(
+                  context: context,
+                  initialTime: TimeOfDay.now(),
+                );
+                if (selectedTime != null) {
+                  _addMealToDay(recipe, selectedTime);
+                }
               },
             );
           }).toList(),
@@ -87,7 +97,10 @@ class _MealPlannerScreenState extends State<MealPlannerScreen> {
           Expanded(
             child: ListView(
               children: mealPlan[days[selectedDay]]!.map((meal) {
-                return MealTile(time: "", meal: meal['name'], dish: "");
+                return MealTile(
+                  time: meal['time'],
+                  meal: meal['recipe']['name'],
+                );
               }).toList(),
             ),
           ),
@@ -103,11 +116,10 @@ class _MealPlannerScreenState extends State<MealPlannerScreen> {
 }
 
 class MealTile extends StatelessWidget {
-  final String time;
+  final TimeOfDay time;
   final String meal;
-  final String dish;
 
-  MealTile({required this.time, required this.meal, required this.dish});
+  MealTile({required this.time, required this.meal});
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +128,7 @@ class MealTile extends StatelessWidget {
       child: ListTile(
         leading: Icon(Icons.food_bank),
         title: Text(meal),
-        subtitle: Text(dish),
+        subtitle: Text("Time: ${time.format(context)}"),
       ),
     );
   }

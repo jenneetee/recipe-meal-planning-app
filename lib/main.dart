@@ -1,4 +1,4 @@
-// main.dart (updated)
+// main.dart (updated with custom color scheme)
 import 'package:flutter/material.dart';
 import 'meal_planner.dart';
 import 'grocery_list.dart';
@@ -15,7 +15,63 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Meal Planner App',
-      theme: ThemeData(primarySwatch: Colors.blue),
+      theme: ThemeData(
+        primaryColor: Color(0xFF606C38),
+        scaffoldBackgroundColor: Color(0xFFFEFAE0),
+        appBarTheme: AppBarTheme(
+          color: Color(0xFF283618),
+          iconTheme: IconThemeData(color: Color(0xFFFEFAE0)),
+          titleTextStyle: TextStyle(
+              color: Color(0xFFFEFAE0),
+              fontSize: 20,
+              fontWeight: FontWeight.bold),
+        ),
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
+          backgroundColor: Color(0xFFBC6C25),
+          foregroundColor: Color(0xFFFEFAE0),
+        ),
+        bottomNavigationBarTheme: BottomNavigationBarThemeData(
+          backgroundColor: Color(0xFF283618),
+          selectedItemColor: Color(0xFFDDA15E),
+          unselectedItemColor: Color(0xFFBC6C25),
+        ),
+        textTheme: TextTheme(
+          bodyLarge: TextStyle(color: Color(0xFF283618)),
+          bodyMedium: TextStyle(color: Color(0xFF283618)),
+          titleLarge: TextStyle(color: Color(0xFF606C38)),
+        ),
+        buttonTheme: ButtonThemeData(
+          buttonColor: Color(0xFFDDA15E),
+          textTheme: ButtonTextTheme.primary,
+        ),
+        chipTheme: ChipThemeData(
+          backgroundColor: Color(0xFFBC6C25),
+          labelStyle: TextStyle(color: Colors.white),
+          selectedColor: Color(0xFFDDA15E),
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: Color(0xFFDDA15E),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide.none,
+          ),
+          hintStyle: TextStyle(color: Color(0xFF283618)),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Color(0xFFDDA15E),
+            foregroundColor: Color(0xFF283618),
+          ),
+        ),
+        cardTheme: CardTheme(
+          color: Color(0xFFFEFAE0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+            side: BorderSide(color: Color(0xFF606C38), width: 2),
+          ),
+        ),
+      ),
       home: MainScreen(),
     );
   }
@@ -48,7 +104,8 @@ class _MainScreenState extends State<MainScreen> {
       "name": "Chicken Stir Fry",
       "image": "assets/chicken_stir_fry.jpg",
       "ingredients": ["Chicken", "Soy Sauce", "Broccoli", "Carrots"],
-      "instructions": "1. Cook chicken.\n2. Add veggies and stir-fry.\n3. Serve!",
+      "instructions":
+          "1. Cook chicken.\n2. Add veggies and stir-fry.\n3. Serve!",
       "labels": []
     },
     {
@@ -68,7 +125,7 @@ class _MainScreenState extends State<MainScreen> {
     _screens = [
       HomeScreen(),
       MealPlannerScreen(recipes: recipes),
-      GroceryListScreen(ingredients: []), // fallback
+      GroceryListScreen(ingredients: []),
     ];
   }
 
@@ -87,8 +144,10 @@ class _MainScreenState extends State<MainScreen> {
         onTap: _onItemTapped,
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: "Meal Planner"),
-          BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: "Grocery List"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.calendar_today), label: "Meal Planner"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.shopping_cart), label: "Grocery List"),
         ],
       ),
     );
