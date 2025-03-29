@@ -9,25 +9,25 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final List<Map<String, dynamic>> recipes = [
     {
-      "name": "Veggie Wrap",
-      "image": "assets/veggie_wrap.jpg",
-      "ingredients": ["Tortilla", "Lettuce", "Tomato", "Avocado"],
-      "instructions": "1. Wrap all ingredients in tortilla.\n2. Enjoy!",
-      "labels": ["Vegan", "Vegetarian"]
+      "name": "Turkey Sandwich",
+      "image": "assets/sub.jpg",
+      "ingredients": ["Whole wheat bread", "Sliced turkey", "Lettuce", "Tomato", "Mayonnaise", "Mustard", "Cheese (optional)"],
+      "instructions": "1. Toast the bread slices if desired.\n2. Spread mayonnaise and mustard on one or both slices of bread.\n3. Layer the sliced turkey evenly on one slice of bread.\n4. Add lettuce, tomato slices, and cheese if using.\n5. Place the second slice of bread on top and press gently.\n6. Cut the sandwich in half and serve immediately.",
+      "labels": []
     },
     {
-      "name": "Pasta Primavera",
-      "image": "assets/pasta_primavera.jpg",
+      "name": "Pasta",
+      "image": "assets/pasta.jpg",
       "ingredients": ["Pasta", "Bell Peppers", "Olive Oil", "Garlic"],
-      "instructions": "1. Cook pasta.\n2. Sauté veggies.\n3. Mix and serve!",
+      "instructions": "1. Bring a large pot of salted water to a boil and cook the pasta according to package instructions until al dente. Drain and set aside.\n2. In a large pan, heat olive oil over medium heat. Add minced garlic and sauté until fragrant.\n3. Add bell peppers and other desired vegetables, cooking for 5-7 minutes until tender yet slightly crisp.\n4. Toss in the cooked pasta and mix well, ensuring the vegetables and flavors are evenly distributed.\n5. Season with salt, pepper, and a sprinkle of Parmesan cheese if desired.",
       "labels": ["Vegetarian"]
     },
     {
-      "name": "Chicken Stir Fry",
-      "image": "assets/chicken_stir_fry.jpg",
-      "ingredients": ["Chicken", "Soy Sauce", "Broccoli", "Carrots"],
-      "instructions": "1. Cook chicken.\n2. Add veggies and stir-fry.\n3. Serve!",
-      "labels": []
+        "name": "Yogurt with Granola & Berries",
+        "image": "assets/yogurt.jpg",
+        "ingredients": ["Greek Yogurt", "Granola", "Strawberries", "Blueberries", "Honey"],
+        "instructions": "1. In a bowl, add a generous serving of Greek yogurt.\n2. Sprinkle a handful of granola over the yogurt for crunch.\n3. Top with fresh strawberries and blueberries for natural sweetness.\n4. Drizzle honey on top for added flavor.\n5. Mix gently or enjoy as layers, and serve immediately!",
+        "labels": ["Vegetarian", "Gluten-Free"]
     },
     {
       "name": "Berry Smoothie",

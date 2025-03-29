@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 import 'grocery_list.dart';
 import 'home_screen.dart';
 
@@ -11,21 +13,43 @@ class MealPlannerScreen extends StatefulWidget {
 }
 
 class _MealPlannerScreenState extends State<MealPlannerScreen> {
-  final List<String> days = [
-    "Fri 7th",
-    "Sat 8th",
-    "Sun 9th",
-    "Mon 10th",
-    "Tue 11th"
-  ];
+  final List<String> days = ["Fri 7th", "Sat 8th", "Sun 9th", "Mon 10th", "Tue 11th"];
   int selectedDay = 0;
   Map<String, List<Map<String, dynamic>>> mealPlan = {};
 
   @override
   void initState() {
     super.initState();
+    _loadMealPlan();
+  }
+
+  Future<void> _loadMealPlan() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      for (var day in days) {
+        String? data = prefs.getString(day);
+        if (data != null) {
+          List<dynamic> storedMeals = jsonDecode(data);
+          mealPlan[day] = storedMeals.map((meal) => {
+            "recipe": meal["recipe"],
+            "time": TimeOfDay(hour: meal["time"]["hour"], minute: meal["time"]["minute"]),
+          }).toList();
+        } else {
+          mealPlan[day] = [];
+        }
+      }
+    });
+  }
+
+  Future<void> _saveMealPlan() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     for (var day in days) {
-      mealPlan[day] = [];
+      List<Map<String, dynamic>> meals = mealPlan[day]!;
+      List<Map<String, dynamic>> storedMeals = meals.map((meal) => {
+        "recipe": meal["recipe"],
+        "time": {"hour": meal["time"].hour, "minute": meal["time"].minute},
+      }).toList();
+      await prefs.setString(day, jsonEncode(storedMeals));
     }
   }
 
@@ -37,12 +61,14 @@ class _MealPlannerScreenState extends State<MealPlannerScreen> {
               ? a["time"].minute.compareTo(b["time"].minute)
               : a["time"].hour.compareTo(b["time"].hour));
     });
+    _saveMealPlan(); // Save to local storage
   }
 
   void _removeMealFromDay(int index) {
     setState(() {
       mealPlan[days[selectedDay]]!.removeAt(index);
     });
+    _saveMealPlan(); // Save to local storage
   }
 
   void _showRecipeSelector() {
@@ -92,8 +118,7 @@ class _MealPlannerScreenState extends State<MealPlannerScreen> {
                           : Colors.grey[400],
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Text(days[index],
-                        style: TextStyle(color: Colors.white)),
+                    child: Text(days[index], style: TextStyle(color: Colors.white)),
                   ),
                 );
               }),

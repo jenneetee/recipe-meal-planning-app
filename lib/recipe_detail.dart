@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'grocery_list.dart';  // Import GroceryListScreen
 
 class RecipeDetailScreen extends StatefulWidget {
   final String recipeName;
@@ -21,14 +20,31 @@ class RecipeDetailScreen extends StatefulWidget {
 }
 
 class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
-  Map<String, bool> checkedItems = {};
+  Map<String, bool> ingredientCheckStatus = {};
+  List<String> groceryList = [];
 
   @override
   void initState() {
     super.initState();
-    // Initialize checkbox state for each ingredient
     for (var ingredient in widget.ingredients) {
-      checkedItems[ingredient] = false;
+      ingredientCheckStatus[ingredient] = false;
+    }
+  }
+
+  void toggleIngredientCheck(String ingredient, bool? value) {
+    setState(() {
+      ingredientCheckStatus[ingredient] = value ?? false;
+    });
+  }
+
+  void addToGroceryList(String ingredient) {
+    if (!groceryList.contains(ingredient)) {
+      setState(() {
+        groceryList.add(ingredient);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('$ingredient added to grocery list')),
+      );
     }
   }
 
@@ -41,7 +57,6 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Recipe Image
             Container(
               height: 200,
               decoration: BoxDecoration(
@@ -53,59 +68,42 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
               ),
             ),
             SizedBox(height: 10),
-            Text(
-              widget.recipeName,
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
+            Text(widget.recipeName,
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             SizedBox(height: 10),
             Wrap(
               spacing: 8,
-              children: widget.labels.map((label) => Chip(label: Text(label))).toList(),
+              children: widget.labels
+                  .map((label) => Chip(label: Text(label)))
+                  .toList(),
             ),
             SizedBox(height: 10),
-            Text(
-              "Ingredients",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            // Ingredients List with Checkbox
+            Text("Ingredients",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             Column(
               children: widget.ingredients.map((ingredient) {
-                return CheckboxListTile(
-                  title: Text(ingredient),
-                  value: checkedItems[ingredient],
-                  onChanged: (bool? value) {
-                    setState(() {
-                      checkedItems[ingredient] = value!;
-                    });
-                  },
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: CheckboxListTile(
+                        title: Text(ingredient),
+                        value: ingredientCheckStatus[ingredient],
+                        onChanged: (value) =>
+                            toggleIngredientCheck(ingredient, value),
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.add_shopping_cart),
+                      onPressed: () => addToGroceryList(ingredient),
+                    ),
+                  ],
                 );
               }).toList(),
             ),
             SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
-                // Collect the checked ingredients and pass them to the grocery list screen
-                List<String> groceryList = widget.ingredients.where((ingredient) {
-                  return checkedItems[ingredient] ?? false;
-                }).toList();
-                if (groceryList.isNotEmpty) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => GroceryListScreen(
-                        ingredients: groceryList,
-                      ),
-                    ),
-                  );
-                }
-              },
-              child: Text("Add to Grocery List"),
-            ),
-            SizedBox(height: 10),
-            Text(
-              "Directions",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
+            Text("Directions",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             Text(widget.instructions),
           ],
         ),
