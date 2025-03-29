@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RecipeDetailScreen extends StatefulWidget {
   final String recipeName;
@@ -21,27 +22,24 @@ class RecipeDetailScreen extends StatefulWidget {
 
 class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   Map<String, bool> ingredientCheckStatus = {};
-  List<String> groceryList = [];
 
   @override
   void initState() {
     super.initState();
+    // Initialize the ingredient check status
     for (var ingredient in widget.ingredients) {
       ingredientCheckStatus[ingredient] = false;
     }
   }
 
-  void toggleIngredientCheck(String ingredient, bool? value) {
-    setState(() {
-      ingredientCheckStatus[ingredient] = value ?? false;
-    });
-  }
+  // Add ingredient to the grocery list in SharedPreferences
+  Future<void> addToGroceryList(String ingredient) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> groceryList = prefs.getStringList('groceryList') ?? [];
 
-  void addToGroceryList(String ingredient) {
     if (!groceryList.contains(ingredient)) {
-      setState(() {
-        groceryList.add(ingredient);
-      });
+      groceryList.add(ingredient);
+      await prefs.setStringList('groceryList', groceryList);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('$ingredient added to grocery list')),
       );
@@ -57,6 +55,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Recipe Image
             Container(
               height: 200,
               decoration: BoxDecoration(
@@ -71,6 +70,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
             Text(widget.recipeName,
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             SizedBox(height: 10),
+            // Recipe Labels
             Wrap(
               spacing: 8,
               children: widget.labels
@@ -78,6 +78,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                   .toList(),
             ),
             SizedBox(height: 10),
+            // Ingredients Section
             Text("Ingredients",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             Column(
@@ -89,8 +90,11 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                       child: CheckboxListTile(
                         title: Text(ingredient),
                         value: ingredientCheckStatus[ingredient],
-                        onChanged: (value) =>
-                            toggleIngredientCheck(ingredient, value),
+                        onChanged: (value) {
+                          setState(() {
+                            ingredientCheckStatus[ingredient] = value ?? false;
+                          });
+                        },
                       ),
                     ),
                     IconButton(
@@ -102,6 +106,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
               }).toList(),
             ),
             SizedBox(height: 10),
+            // Instructions Section
             Text("Directions",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             Text(widget.instructions),

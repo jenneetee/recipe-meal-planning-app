@@ -124,7 +124,7 @@ class _MainScreenState extends State<MainScreen> {
     _screens = [
       HomeScreen(),
       MealPlannerScreen(recipes: recipes),
-      GroceryListScreen(ingredients: []),
+      GroceryListScreen(), // Removed the ingredients parameter here
     ];
   }
 
